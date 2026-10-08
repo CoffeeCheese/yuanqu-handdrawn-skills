@@ -1,0 +1,17 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+/output/
+/tmp/
+
+# Local engineering skill configuration and working documents
+/AGENTS.md
+/docs/
+/.scratch/
+/GLOSSARY.md
+/GLOSSARY-MAP.md
