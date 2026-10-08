@@ -9,9 +9,9 @@ node_modules/
 /output/
 /tmp/
 
-# Local engineering skill configuration and working documents
-/AGENTS.md
-/docs/
+# Local working documents; shared agent rules are versioned
+/docs/*
+!/docs/agents/
 /.scratch/
 /GLOSSARY.md
 /GLOSSARY-MAP.md
