@@ -4,17 +4,18 @@
 
 ## 根目录
 
-- 未指定目标目录：当前工作目录的 `output/`。
-- 指定普通目标目录，如 `/Users/某人/Desktop/redBook/`：在其中建立 `output/`。
-- 用户已经明确指定输出根目录，如 `./output/`、`./output/yuanqu-handdrawn/`，或指定一个目录作为输出根：直接采用，不重复追加 `output`。
+- 未指定目标目录：当前工作目录的 `yuanqu-handdrawn/`，使用技能名区分其它技能的成果。
+- 指定普通目标目录，如 `/Users/某人/Desktop/redBook/`：在其中建立 `yuanqu-handdrawn/`。
+- 已指定技能同名目录，如 `./yuanqu-handdrawn/`：直接采用，不重复嵌套同名目录。
+- 用户明确指定其它输出根目录，如 `./作品/` 或旧的 `./output/`：直接采用，不替换用户指定名称。
 - 用户明确指定某个成品文件路径时，成品遵从该路径；记录与代码仍归入选定输出根的对应子目录，并记录关联路径。
 
-本地渲染 CLI 的 `--out-dir` 始终接收已确定的**输出根目录**，不负责猜测普通目标目录；默认值为当前工作目录的 `output`。
+本地渲染 CLI 的 `--out-dir` 始终接收已确定的**输出根目录**，不负责猜测普通目标目录；默认值为当前工作目录的 `yuanqu-handdrawn`。
 
 ## 分类存放
 
 ```text
-output/
+yuanqu-handdrawn/
 ├── images/                  选中的成品 PNG／JPG
 ├── records/                 生成指令、观察与核对记录
 ├── source/                  实际产生的可编辑文件或代码

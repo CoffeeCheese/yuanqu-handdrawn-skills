@@ -7,6 +7,7 @@ __pycache__/
 .venv/
 node_modules/
 /output/
+/yuanqu-handdrawn/
 /tmp/
 
 # Local working documents; shared agent rules are versioned

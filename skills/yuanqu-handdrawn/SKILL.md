@@ -37,7 +37,7 @@ license: MIT
 
 ## 保存与交付
 
-按 [references/output-layout.md](references/output-layout.md) 确定统一的输出根目录。默认使用当前工作目录的 `output/`；普通目标目录下建立 `output/`，已明确指定输出根时直接采用。成品放 `images/`，记录放 `records/`，实际产生的源码与绘图数据放 `source/`，需要留存的临时文件放 `work/`。
+按 [references/output-layout.md](references/output-layout.md) 确定统一的输出根目录。默认使用当前工作目录的 `yuanqu-handdrawn/`；普通目标目录下建立同名目录，已明确指定输出根时直接采用。成品放 `images/`，记录放 `records/`，实际产生的源码与绘图数据放 `source/`，需要留存的临时文件放 `work/`。
 
 每张只交付一张选中的成品，以 `<原图名>-yuanqu.png` 命名，关联文件重名时整组统一编号；用户指定 JPG 时转换格式。正方形是画幅要求，默认请求 1024×1024，保存时记录实际像素尺寸，不能把请求值当作已实现。
 

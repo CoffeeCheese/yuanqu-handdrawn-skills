@@ -3,13 +3,13 @@ import { readFile, readdir, mkdir, writeFile, access, unlink } from 'node:fs/pro
 import { basename, dirname, extname, join, resolve } from 'node:path';
 import { renderScene } from './engine.mjs';
 
-const usage = 'node scripts/render.mjs SCENE.json [--out-dir OUTPUT_ROOT] [--name NAME] [--size 512|1024|2048] [--svg-only|--check]\nOutput root defaults to ./output; images/ holds PNG, source/ holds scene and SVG, records/ holds reports.';
+const usage = 'node scripts/render.mjs SCENE.json [--out-dir OUTPUT_ROOT] [--name NAME] [--size 512|1024|2048] [--svg-only|--check]\nOutput root defaults to ./yuanqu-handdrawn; images/ holds PNG, source/ holds scene and SVG, records/ holds reports.';
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) { console.log(usage); return; }
   const file = args.shift();
   if (!file || file.startsWith('--')) throw new Error(usage);
-  const options = { outDir: 'output', size: 1024, svgOnly: false, check: false };
+  const options = { outDir: 'yuanqu-handdrawn', size: 1024, svgOnly: false, check: false };
   while (args.length) {
     const flag = args.shift();
     if (flag === '--svg-only') options.svgOnly = true;

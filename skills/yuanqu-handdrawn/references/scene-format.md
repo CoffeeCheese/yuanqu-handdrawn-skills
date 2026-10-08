@@ -61,9 +61,9 @@
 
 ```bash
 node "<skill-root>/scripts/render.mjs" "scene.json" --check
-node "<skill-root>/scripts/render.mjs" "scene.json" --out-dir "output" --name "主体-yuanqu"
+node "<skill-root>/scripts/render.mjs" "scene.json" --out-dir "yuanqu-handdrawn" --name "主体-yuanqu"
 ```
 
-`--out-dir` 接收输出根目录，默认 `output`，CLI 分类保存到 `images/`、`source/` 和 `records/`。`--check` 只输出报告，不创建文件。`--size` 为 512/1024/2048。默认 PNG 依赖 skill 根目录的 `npm ci`；`--svg-only` 明确省略 PNG，不能报告完整交付。
+`--out-dir` 接收输出根目录，默认 `yuanqu-handdrawn`，CLI 分类保存到 `images/`、`source/` 和 `records/`。`--check` 只输出报告，不创建文件。`--size` 为 512/1024/2048。默认 PNG 依赖 skill 根目录的 `npm ci`；`--svg-only` 明确省略 PNG，不能报告完整交付。
 
 报告初始 pending-source-review，含数据哈希、种子、版本、参数和路径。重名不覆盖，规范化 `.scene.json` 可再渲染。最终报告补语义审核与尝试次数。

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, writeFile, mkdir, mkdtemp, readdir, cp, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, mkdtemp, readdir, realpath, cp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -196,6 +196,32 @@ test('CLI creates all replay artifacts and reserves unique names for concurrent 
       assert.deepEqual(report.files, output.files);
     }
     assert.deepEqual(await readFile(outputs[0].files.png), await readFile(outputs[1].files.png));
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test('CLI defaults to a skill-specific directory and honors an explicit output root', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'yuanqu-default-root-'));
+  try {
+    await mkdir(join(dir, 'output'));
+    const unrelated = join(dir, 'output', 'other-skill.txt');
+    await writeFile(unrelated, '其它技能的成果');
+    const args = [join(root, 'scripts/render.mjs'), join(root, 'references/examples/object.json'), '--name', '物品', '--size', '512'];
+    const defaultResult = JSON.parse((await run(process.execPath, args, { cwd: dir })).stdout);
+    const expectedRoot = join(await realpath(dir), 'yuanqu-handdrawn');
+    assert.deepEqual((await readdir(expectedRoot)).sort(), ['images', 'records', 'source']);
+    assert.equal(dirname(defaultResult.files.png), join(expectedRoot, 'images'));
+    assert.equal(dirname(defaultResult.files.report), join(expectedRoot, 'records'));
+    assert.equal(dirname(defaultResult.files.scene), join(expectedRoot, 'source'));
+    assert.equal(dirname(defaultResult.files.svg), join(expectedRoot, 'source'));
+    const savedReport = JSON.parse(await readFile(defaultResult.files.report, 'utf8'));
+    assert.deepEqual(savedReport.files, defaultResult.files);
+    const explicitRoot = join(dir, '作品', 'yuanqu-handdrawn');
+    const explicitResult = JSON.parse((await run(process.execPath, [...args, '--out-dir', explicitRoot], { cwd: dir })).stdout);
+    assert.deepEqual((await readdir(explicitRoot)).sort(), ['images', 'records', 'source']);
+    assert.equal(dirname(explicitResult.files.png), join(explicitRoot, 'images'));
+    assert.deepEqual(await readFile(defaultResult.files.png), await readFile(explicitResult.files.png));
+    assert.equal(await readFile(unrelated, 'utf8'), '其它技能的成果');
+    assert.deepEqual(await readdir(join(dir, 'output')), ['other-skill.txt']);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
 
