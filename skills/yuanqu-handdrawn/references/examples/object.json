@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "mode": "object",
+  "seed": 42,
+  "source": {
+    "image": "synthetic:object",
+    "summary": "合成语法样例，不是用户原图转换；只验证规则与流程。",
+    "people": 0
+  },
+  "background": [],
+  "objects": [
+    {
+      "type": "rect",
+      "x": 680,
+      "y": 460,
+      "width": 160,
+      "height": 195,
+      "radius": 70,
+      "fill": "none",
+      "opacity": 1,
+      "stroke": "blue",
+      "strokeWidth": 18
+    },
+    {
+      "type": "path",
+      "segments": [
+        [
+          "M",
+          330,
+          530
+        ],
+        [
+          "Q",
+          255,
+          480,
+          190,
+          415
+        ],
+        [
+          "Q",
+          150,
+          398,
+          155,
+          445
+        ],
+        [
+          "Q",
+          212,
+          556,
+          295,
+          629
+        ],
+        [
+          "Q",
+          347,
+          594,
+          330,
+          530
+        ],
+        [
+          "Z"
+        ]
+      ],
+      "fill": "blue",
+      "opacity": 0.7
+    },
+    {
+      "type": "ellipse",
+      "cx": 500,
+      "cy": 600,
+      "rx": 228,
+      "ry": 155,
+      "fill": "peach",
+      "opacity": 0.7
+    },
+    {
+      "type": "ellipse",
+      "cx": 500,
+      "cy": 432,
+      "rx": 143,
+      "ry": 27,
+      "fill": "blue",
+      "opacity": 0.85
+    },
+    {
+      "type": "ellipse",
+      "cx": 500,
+      "cy": 389,
+      "rx": 37,
+      "ry": 25,
+      "fill": "blue",
+      "opacity": 0.9
+    }
+  ],
+  "bodies": [],
+  "heads": []
+}

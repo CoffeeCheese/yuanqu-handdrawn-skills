@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "mode": "landscape",
+  "seed": 42,
+  "source": {
+    "image": "synthetic:landscape",
+    "summary": "合成语法样例，不是用户原图转换；只验证规则与流程。",
+    "people": 0,
+    "landmark": "合成圆拱与山坡空间"
+  },
+  "background": [
+    {
+      "type": "ellipse",
+      "cx": 550,
+      "cy": 727,
+      "rx": 300,
+      "ry": 112,
+      "fill": "peach",
+      "opacity": 0.4
+    },
+    {
+      "type": "rect",
+      "x": 380,
+      "y": 280,
+      "width": 240,
+      "height": 450,
+      "radius": 110,
+      "fill": "blue",
+      "opacity": 0.4
+    },
+    {
+      "type": "rect",
+      "x": 450,
+      "y": 395,
+      "width": 100,
+      "height": 335,
+      "radius": 48,
+      "fill": "paper",
+      "opacity": 1
+    },
+    {
+      "type": "ellipse",
+      "cx": 515,
+      "cy": 770,
+      "rx": 330,
+      "ry": 28,
+      "fill": "blue",
+      "opacity": 0.2
+    }
+  ],
+  "objects": [],
+  "bodies": [],
+  "heads": []
+}

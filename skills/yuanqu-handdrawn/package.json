@@ -1,0 +1,16 @@
+{
+  "name": "yuanqu-handdrawn",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "2.6.2"
+  },
+  "license": "MIT"
+}

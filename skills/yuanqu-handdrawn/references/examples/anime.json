@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "mode": "anime",
+  "seed": 42,
+  "source": {
+    "image": "synthetic:anime",
+    "summary": "合成语法样例，不是用户原图转换；只验证规则与流程。",
+    "people": 1
+  },
+  "background": [],
+  "objects": [],
+  "bodies": [
+    {
+      "type": "rect",
+      "x": 345,
+      "y": 650,
+      "width": 310,
+      "height": 200,
+      "radius": 75,
+      "fill": "blue",
+      "opacity": 0.4
+    }
+  ],
+  "heads": [
+    {
+      "id": "p1",
+      "x": 500,
+      "y": 470,
+      "size": 410,
+      "tilt": -9,
+      "view": "front",
+      "eyes": {
+        "left": "closed",
+        "right": "open"
+      },
+      "ears": [],
+      "features": [
+        "合成样例的侧分短发"
+      ],
+      "hairBack": [
+        {
+          "type": "ellipse",
+          "cx": 0,
+          "cy": -10,
+          "rx": 56,
+          "ry": 61,
+          "fill": "blue",
+          "opacity": 1
+        },
+        {
+          "type": "ellipse",
+          "cx": -44,
+          "cy": -4,
+          "rx": 14,
+          "ry": 35,
+          "fill": "blue",
+          "opacity": 0.82
+        }
+      ],
+      "hairFront": [
+        {
+          "type": "path",
+          "segments": [
+            [
+              "M",
+              -49,
+              -24
+            ],
+            [
+              "C",
+              -44,
+              -64,
+              -10,
+              -66,
+              20,
+              -54
+            ],
+            [
+              "C",
+              45,
+              -49,
+              55,
+              -37,
+              48,
+              -22
+            ],
+            [
+              "Q",
+              21,
+              -45,
+              -3,
+              -35
+            ],
+            [
+              "Q",
+              -30,
+              -30,
+              -49,
+              -24
+            ],
+            [
+              "Z"
+            ]
+          ],
+          "fill": "blue",
+          "opacity": 0.9
+        }
+      ],
+      "accessories": []
+    }
+  ]
+}
