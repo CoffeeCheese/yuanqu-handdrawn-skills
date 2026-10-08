@@ -1,4 +1,4 @@
 interface:
   display_name: "圆趣手绘"
-  short_description: "用当前模型识别原图，以本地代码绘制灰蓝蜜桃的圆趣手绘插画，保留数据复现"
-  default_prompt: "使用 $yuanqu-handdrawn 将这张原图转换为风格相近的圆趣手绘插画，使用本地代码绘制。"
+  short_description: "由模型理解原图与风格参考，使用会话内置图像生成制作灰蓝蜜桃的圆趣手绘插画"
+  default_prompt: "使用 $yuanqu-handdrawn 将这张原图转换为接近参考成品的圆趣手绘插画，优先使用会话内置图像生成。"

@@ -1,92 +1,76 @@
 # 圆趣手绘
 
-将原图转换为灰蓝／蜜桃橘的正方形插画。当前模型查看原图并拟合绘图数据，本地 Node.js 与 SVG/PNG 渲染器绘制，不调用外部视觉模型或图像生成 API。
+把照片或动漫原图转换为灰蓝／蜜桃橘、胶囊眼和白纸留白的正方形手绘插画。当前模型理解原图与风格参考，优先使用会话内置图像生成完成绘制。
 
-默认提供**代码手绘实验**：保留主体轮廓、衣服与必要姿势，以固定种子的颜料颗粒靠近手绘质感；明确要求几何一致时使用原有图标模式。手绘实验目前只验证了一张真实坐姿肖像，不能保证达到图像模型的细腻程度。
-
-通过 `npx skills add` 安装，在 Codex 中使用 `$yuanqu-handdrawn` 调用。
+默认流程关注风格、身份和姿态：模型自由决定脸型、眼距、发块和笔触，无需 SVG、坐标数据或固定几何比例。不配置外部 API 或密钥，也不承诺指定图像模型。需要离线代码绘图时可明确选择保留的旧绘图模块。
 
 ## 安装
 
-准备 Node.js **22.20 或更高**（满足当前 skills CLI 要求）、npm 和 Git。使用的 agent 需要能查看图片、读写文件和执行 Node.js 命令；首版主要面向 Codex。
+通过 `npx skills add` 管理，在 Codex 中使用 `$yuanqu-handdrawn` 调用。准备 Node.js 22.20 或更高、npm 和 Git；运行环境需要能查看图片、保存文件，并提供内置图像生成能力。
 
-本仓库为 **private**，安装者需要仓库访问权限和可用的 GitHub 身份认证。已有 Git 凭据或 SSH 配置可直接使用；使用 GitHub CLI 时，可先执行 `gh auth status` 检查，尚未登录则执行 `gh auth login`。
+本仓库为 **private**，安装者需有访问权限及可用的 GitHub 认证。已有 Git 凭据或 SSH 配置可直接使用；GitHub CLI 用户可先执行 `gh auth status` 检查登录。
 
-推荐全局安装，便于在不同项目中调用：
+推荐全局安装：
 
 ```bash
 npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex --global --yes
 ```
 
-仅安装到当前项目时，在目标项目目录执行：
+只安装到当前项目时去掉 `--global`。技能位于全局 `~/.agents/skills/yuanqu-handdrawn/` 或项目内 `.agents/skills/yuanqu-handdrawn/`。
 
-```bash
-npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex --yes
-```
-
-CLI 将技能放在全局 `~/.agents/skills/yuanqu-handdrawn/` 或项目内 `.agents/skills/yuanqu-handdrawn/`。HTTPS 认证不可用、已配置 GitHub SSH 的情况下，可改用：
+HTTPS 认证不可用、已配置 GitHub SSH 时可使用：
 
 ```bash
 npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill yuanqu-handdrawn --agent codex --global --yes
 ```
 
-`skills add` 安装的是技能文件。首次生成 PNG 时，agent 会在实际安装目录运行 `npm ci --ignore-scripts --no-audit --no-fund`，准备锁定版本的 PNG 渲染器；无需图像生成 API 密钥或浏览器。首次依赖安装需要能访问 npm。
-
-也可以提前手动准备全局安装的依赖：
-
-```bash
-npm --prefix "$HOME/.agents/skills/yuanqu-handdrawn" ci --ignore-scripts --no-audit --no-fund
-```
+默认模型生成无需安装本仓库的 npm 渲染依赖。安装 skill 本身不会为会话增加图像生成能力；环境缺少该能力时会说明未完成成图并提供生成指令，代码绘图需明确选择。
 
 ## 使用
 
-安装后提供一张原图，并发送：
+提供原图后发送：
 
 ```text
 使用 $yuanqu-handdrawn 将这张原图转换为圆趣手绘插画。
-保持原图的人物数量、发型、头朝向和遮挡，成品保存到 ./output/yuanqu-handdrawn/。
+保留人物数量、发型、头朝向、姿态和真实遮挡，保存到 ./output/yuanqu-handdrawn/。
 ```
 
-也可以明确指定多张原图或一个目录；目录默认只处理直属图片，每张独立生成和验收。仅需要分析时，说明“只分析，不生成”。
-
-用户原图提供身份、姿势和场景内容；旧成品只提供手绘语言。默认输出一张 1024×1024 PNG，背景为白纸；每张最多一次数据修正。需要 JPG 时明确提出。
-
-### 本地代码手绘实验
+有自己认可的风格成品时，同时提供并明确角色：
 
 ```text
-使用 $yuanqu-handdrawn 将原图转换为接近参考成品的圆趣手绘插画。
-仅使用当前模型和本地代码，保留人物的坐姿、双手及识别特征，不要求固定几何比例。
+使用 $yuanqu-handdrawn：图1是原图，图2只作为风格参考。
+尽量接近图2的配色、圆润造型和蜡笔笔触，人物身份与姿势以图1为准。
+优先使用会话内置图像生成，保存到指定目录。
 ```
 
-使用 [代码手绘规则](skills/yuanqu-handdrawn/references/code-handdrawn.md) 和 V2 分层数值曲线。绘图阶段无需联网或 API 密钥；同一份数据、种子、尺寸和渲染环境可复现，重新识别与拟合仍可能因模型而变化。胶囊眼、颜料颗粒与轮廓分别处理，防止纹理破坏主要五官。
+也接受多张原图或一个目录；目录默认只处理直属图片，每张独立生成和核对。只需分析时说明“只分析，不生成”。
 
-下面是本轮真实照片的代码实验。保留了眼镜、领饰、坐姿、交叠双手及必要座椅；发型、衣纹和椅背花纹仍比旧成品概括，风格相似度等待用户确认。
+未指定风格图时采用包内参考。以下图片是用户提供的历史风格成品，用于表达目标，不是本次规则重构后的生成样张：
 
-![本地代码手绘实验](assets/previews/paint-portrait.png)
+![圆趣手绘风格参考](skills/yuanqu-handdrawn/assets/handdrawn-reference.jpg)
 
-### 几何样例
+## 风格与构图
 
-以下是合成绘图数据的引擎预览，用于展示造型与配色，不是用户原图转换效果的证明。
+柔和圆脸、醒目的实心竖胶囊眼、干净的脸部留白，配合连续发块、蜡笔／彩铅颗粒和自然边缘。灰蓝和蜜桃为主，必要识别配件允许少量低饱和辅助色。完整要求见 [技能入口](skills/yuanqu-handdrawn/SKILL.md)。
 
-| 人物肖像 | 闭眼动漫 | 物品 |
-| --- | --- | --- |
-| ![人物肖像几何样例](assets/previews/portrait.png) | ![保留一只闭眼的动漫几何样例](assets/previews/anime.png) | ![茶壶物品几何样例](assets/previews/object.png) |
-
-## 支持内容
-
-| 分支 | 构图与保留项 |
+| 输入 | 构图依据 |
 | --- | --- |
-| 人物肖像 | 大头短肩，保留发型、必要配件、头向和真实遮挡 |
-| 人形动漫 | 重建几何五官，钝化发束，保留闭眼、眼罩与背影 |
-| 物品 | 保留轮廓、比例、关键构件和连接关系，无拟人化 |
-| 有人的旅游照 | 保留主要旅行者及互动，背景概括为一个浅色地标 |
-| 无人风景 | 用 3–7 个圆润块面保留地标或空间结构，不添加人物 |
+| 人物或人形动漫 | 保留发型、配件、头向、闭眼与遮挡；头像用头肩构图，必要坐姿、双手与服装可保留 |
+| 有人的旅游照 | 保留主要旅行者、互动及一个浅色场景线索 |
+| 无人风景或物品 | 保留可辨的空间或物品结构，保持原图内容与无拟人化 |
 
-上表为固定几何模式的已实现语法；代码手绘实验使用自由分层曲线，目前只有单人坐姿肖像经过真实样张检查。完整规范见 [技能入口](skills/yuanqu-handdrawn/SKILL.md)、[代码手绘规则](skills/yuanqu-handdrawn/references/code-handdrawn.md)、[几何风格规则](skills/yuanqu-handdrawn/references/style.md) 和 [几何构图规则](skills/yuanqu-handdrawn/references/compositions.md)。
+## 输出与稳定性
 
-## 查看、更新与移除
+默认请求一张 1:1、1024×1024 的纯插画，记录工具实际生成尺寸。用户指定目录优先，否则保存到当前目录的 `output/yuanqu-handdrawn/`，重名编号：
 
-全局安装对应以下命令：
+- `<原图名>-yuanqu.png`：选中的成品；需要 JPG 时可指定。
+- `<原图名>-yuanqu.generation.md`：输入与参考路径、实际指令、使用的能力、可见参数、尝试次数、主体与风格核对结果。
+
+每张先生成一次，有具体偏差时最多修正一次；仍有偏差会说明。未核对成品时不记为通过。用户可继续提出下一轮修改。
+
+系列稳定性依靠同一风格参考、核心要求和生成后核对；不保证重生成逐像素一致，也不假设工具能固定模型或种子。当前模型的视觉判断和会话提供的图像生成能力都可能影响效果。本次重构验证了规则与资源完整性，新的生成流程尚待真实样张验证。
+
+## 更新与移除
 
 ```bash
 # 查看全局 Codex 技能
@@ -95,44 +79,43 @@ npx skills list --global --agent codex
 # 更新这一项技能
 npx skills update yuanqu-handdrawn --global --yes
 
-# 移除这一项技能
+# 更新失败时，重新执行安装命令替换技能文件
+npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex --global --yes
+
+# 移除
 npx skills remove yuanqu-handdrawn --global --agent codex --yes
 ```
 
-项目安装的查看和移除命令去掉 `--global`；更新用 `npx skills update yuanqu-handdrawn --project --yes`。更新可能替换整个技能目录，下一次生成 PNG 时会重新准备缺失的依赖。
+项目安装的查看和移除去掉 `--global`；更新使用 `--project`。更新前将个人改动和输出保存在技能目录之外。安装命令参考 [skills CLI 官方说明](https://github.com/vercel-labs/skills)，本仓库此前使用 CLI 1.7.1 验证。
 
-安装和管理规则参考 [skills CLI 官方说明](https://github.com/vercel-labs/skills)。本轮流程使用 CLI `1.7.1` 验证；需要固定同一 CLI 版本时，将 `npx skills` 替换为 `npx skills@1.7.1`。
+## 可选的本地代码绘图
 
-## 输出与可复现性
+仅在明确要求代码／离线绘图时读取 [代码手绘实验](skills/yuanqu-handdrawn/references/code-handdrawn.md)；明确要求固定几何复现时读取 [固定几何流程](skills/yuanqu-handdrawn/references/legacy-geometry.md)。这些模式可复用已有 scene 数据，需准备锁定的本地渲染依赖。其数据、SVG 和种子要求不适用于默认模型生成。
 
-默认保存到当前工作目录的 `output/yuanqu-handdrawn/`，也可指定其它目录。重名自动编号，每张保留：
+[历史代码肖像样张](assets/previews/paint-portrait.png) 与 [几何样例](assets/previews/portrait.png) 仅展示旧绘图模块能力。代码颗粒与模型生成的手绘笔触可能不同。
 
-- `.png`：发布与预览用成品。
-- `.svg`：可编辑的轮廓；V2 另含嵌入 PNG 的颗粒层。
-- `.scene.json`：规范化绘图数据和纹理种子。
-- `.report.json`：数据校验、版本、原图核对与风格审核结果。
-- `.analysis.md`：本次识别指令与观察记录。
+## 设计与开发
 
-固定绘图数据、种子、引擎版本和渲染环境后可复现；重新识别原图可能得到不同数据。模型负责识别身份、遮挡与轮廓，程序负责稳定绘制；通过数据校验仍需核对原图和目标风格。复杂发型与多人互动可能需要修正；旅游与风景尚无用户原图实测基线。
+按 `codebase-design` 将规则收拢为一个 Module：
 
-## 开发
+| 设计概念 | 本项目的选择 |
+| --- | --- |
+| Interface | 原图＋可选风格参考＋可选输出目录，返回成品与生成记录 |
+| Implementation | 参考角色、风格要求、生成指令、核对、一次修正及保存集中在技能内部 |
+| Seam | 生成执行处：使用会话实际可用的图像能力；明确选择代码时切换到旧绘图模块 |
+| Adapter | 会话内置图像生成与已有本地渲染流程，两者实际存在，按用户选择使用 |
+
+Depth 来自小 Interface 隐藏识别、风格约束和交付细节；Leverage 是不同图片复用同一流程，Locality 是默认规则集中在 [SKILL.md](skills/yuanqu-handdrawn/SKILL.md)。工具参数集中在 [内置生成约定](skills/yuanqu-handdrawn/references/model-generation.md)，旧代码规范仅按需读取。
+
+修改规则时检查默认路径不加载固定几何规范，参考图只影响风格，能力缺失时不偷偷切换执行方式。旧渲染脚本保留回归检查：
 
 ```bash
-git clone git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git
-cd yuanqu-handdrawn-skills/skills/yuanqu-handdrawn
+cd skills/yuanqu-handdrawn
 npm ci --ignore-scripts --no-audit --no-fund
 npm test
-
-# 使用合成数据导出一份预览
-node scripts/render.mjs references/examples/portrait.json --out-dir ../../output/demo
-
-# 使用已保存的肖像曲线验证本地代码手绘
-node scripts/render.mjs references/examples/paint-portrait.json --out-dir ../../output/demo --name paint-portrait
 ```
 
-绘图引擎支持 Node.js 20 或更高。V1 的 SVG 生成与校验只需 Node；V2 颗粒层使用 Resvg，即使仅导出 SVG 也要准备依赖。测试覆盖原有五类几何分支以及 V2 材质复现、眼睛保护、颜料叠加和数据验证。
-
-技能的脚本、参考图、规则、示例、依赖清单和 MIT 许可均位于 [skills/yuanqu-handdrawn/](skills/yuanqu-handdrawn/)，安装后不依赖源码仓库的其它目录。
+离线脚本测试验证旧代码模块，不验证模型生成质量。新生成效果应以真实原图及参考成品逐例比较。
 
 ## 许可证
 
