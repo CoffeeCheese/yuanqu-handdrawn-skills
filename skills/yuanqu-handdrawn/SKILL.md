@@ -1,11 +1,18 @@
 ---
 name: yuanqu-handdrawn
 description: 将用户原图转换为圆趣手绘插画：识别内容并用固定 SVG 引擎控制灰蓝/蜜桃橘配色、胶囊眼和白纸留白，导出 PNG 与可复现绘图数据。适用于明确要求圆趣手绘、两色胶囊眼头像或这套风格的物品、旅游照与风景转换。
+license: MIT
 ---
 
 # 圆趣手绘
 
 用原图识别内容，用固定引擎绘制。目标是几何一致的原创融合插画：宽圆面罩、醒目胶囊眼、灰蓝/蜜桃橘和白纸留白。几何优先于材质丰富程度。
+
+## 安装位置与依赖
+
+支持通过 `npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex` 安装，加 `--global` 安装到用户范围。私有仓库需已有 Git/GitHub CLI/SSH 访问权限。该命令安装技能文件，PNG 的 npm 依赖在首次使用时按执行步骤准备。
+
+`<skill-root>` 是当前加载的 `SKILL.md` 所在目录；无论来自源码、项目安装还是全局安装，都从该目录查找 `scripts/`、`references/`、`assets/` 和 `package-lock.json`。依赖安装也在此目录执行，用户原图、临时 JSON 和成品继续位于用户工作目录。技能更新后 PNG 依赖可能需要重新准备。
 
 ## 输入与参考角色
 
