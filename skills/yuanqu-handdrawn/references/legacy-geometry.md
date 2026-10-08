@@ -17,10 +17,10 @@
    需 Node.js 20 或更高。PNG 依赖缺失时在 skill 根目录执行 `npm ci --ignore-scripts --no-audit --no-fund`。V1 的校验与 SVG 生成只需 Node；默认 PNG 导出使用锁定的 Resvg。用户接受 SVG 交付时才使用 `--svg-only`。
 
 5. 查看 PNG，按 [quality.md](quality.md) 与原图比较；最多修正一次 JSON 后重绘。程序检查通过不表示身份、姿势或风格已通过。
-6. 在最终 `.report.json` 更新 `semanticReview`、`attempts` 和顶层 `status`。复制同名 `.analysis.md` 到输出目录，说明实际偏差。
+6. 使用 CLI 返回的报告路径更新 `semanticReview`、`attempts` 和顶层 `status`。复制同名 `.analysis.md` 到 `records/`，说明实际偏差。
 
 ## 输出与局限
 
-默认 1024×1024，也接受 512 或 2048。保留 `.scene.json`、`.svg`、`.png`、`.report.json` 和 `.analysis.md`，重名自动编号。用户指定目录优先，否则使用 `output/yuanqu-handdrawn/`。
+默认 1024×1024，也接受 512 或 2048。按 [output-layout.md](output-layout.md) 确定输出根，作为 `--out-dir` 传入。PNG 放 `images/`，scene／SVG 放 `source/`，report／analysis 放 `records/`，整组重名编号。用户接受 SVG-only 时没有 PNG 成品，仍按分类目录保存。
 
 固定 scene、seed、引擎与渲染环境后可以复现；重新识别原图会改变数据。五个分支有离线语法样例，旅游和无人风景尚无用户原图实测基线。此模式的几何保证不能用于证明默认模型生成的质量。

@@ -53,7 +53,7 @@
 
 ## 指令记录与运行
 
-`.analysis.md` 保存本次实际识别指令与观察。例如：
+`.analysis.md` 保存本次实际识别指令与观察，交付时按 [output-layout.md](output-layout.md) 放入输出根的 `records/`。例如：
 
 > 将原图识别为圆趣手绘 scene JSON。原图是身份/内容唯一来源，参考只提供几何语法。识别人数、视向、倾斜、每眼状态、可见耳朵、发型与最多三项配件；选当前分支，用少量数值曲线表达，不补隐藏内容。
 
@@ -61,9 +61,9 @@
 
 ```bash
 node "<skill-root>/scripts/render.mjs" "scene.json" --check
-node "<skill-root>/scripts/render.mjs" "scene.json" --out-dir "output/yuanqu-handdrawn" --name "主体-yuanqu"
+node "<skill-root>/scripts/render.mjs" "scene.json" --out-dir "output" --name "主体-yuanqu"
 ```
 
-`--check` 只输出报告，不创建文件。`--size` 为 512/1024/2048。默认 PNG 依赖 skill 根目录的 `npm ci`；`--svg-only` 明确省略 PNG，不能报告完整交付。
+`--out-dir` 接收输出根目录，默认 `output`，CLI 分类保存到 `images/`、`source/` 和 `records/`。`--check` 只输出报告，不创建文件。`--size` 为 512/1024/2048。默认 PNG 依赖 skill 根目录的 `npm ci`；`--svg-only` 明确省略 PNG，不能报告完整交付。
 
 报告初始 pending-source-review，含数据哈希、种子、版本、参数和路径。重名不覆盖，规范化 `.scene.json` 可再渲染。最终报告补语义审核与尝试次数。

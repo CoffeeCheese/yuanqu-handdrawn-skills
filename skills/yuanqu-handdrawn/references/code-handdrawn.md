@@ -38,11 +38,11 @@ node "<skill-root>/scripts/render.mjs" "<scene.json>" --check
 node "<skill-root>/scripts/render.mjs" "<scene.json>" --out-dir "<output-dir>" --name "<原图名>-paint"
 ```
 
-沿用 512/1024/2048、重名编号与五个侧文件。V2 的 SVG 包含可编辑轮廓和嵌入 PNG 的颗粒层，因此即使 `--svg-only` 也需要 Resvg。它不是完全由矢量组成的扫描画。
+`<output-dir>` 是按 [output-layout.md](output-layout.md) 确定的输出根目录。沿用 512/1024/2048 和整组重名编号；CLI 将 PNG 放 `images/`，scene／SVG 放 `source/`，report 放 `records/`，并返回真实文件路径。V2 的 SVG 包含可编辑轮廓和嵌入 PNG 的颗粒层，因此即使 `--svg-only` 也需要 Resvg。它不是完全由矢量组成的扫描画。
 
 查看 PNG 并比较实际原图和风格参考：身份轮廓、姿势、眼耳遮挡、胶囊、调色、笔触。最多一次曲线/参数修正；没有通过时说明具体偏差，保留记录，不改走图像模型。
 
-报告补充 `semanticReview` 和 `styleReview`（状态、具体问题、attempts）；两项均通过才将顶层 status 设 passed。仅达到程序要求、需要用户确认风格时设 `needs-style-review`。将实际识别记录保存为同名 `.analysis.md`。不要把数据校验通过当成风格通过。
+在 CLI 返回的报告路径补充 `semanticReview` 和 `styleReview`（状态、具体问题、attempts）；两项均通过才将顶层 status 设 passed。仅达到程序要求、需要用户确认风格时设 `needs-style-review`。将实际识别记录保存到 `records/` 的同名 `.analysis.md`。不要把数据校验通过当成风格通过。
 
 ## 稳定性边界
 

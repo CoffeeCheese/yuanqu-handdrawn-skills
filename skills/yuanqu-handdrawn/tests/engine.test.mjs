@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, mkdtemp, readdir, cp, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, mkdtemp, readdir, cp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -181,14 +181,38 @@ test('CLI creates all replay artifacts and reserves unique names for concurrent 
     const results = await Promise.all([run(process.execPath, args), run(process.execPath, args)]);
     const outputs = results.map(r => JSON.parse(r.stdout));
     assert.notEqual(outputs[0].files.png, outputs[1].files.png);
-    assert.equal((await readdir(dir)).length, 8);
+    assert.deepEqual((await readdir(dir)).sort(), ['images', 'records', 'source']);
+    assert.equal((await readdir(join(dir, 'images'))).length, 2);
+    assert.equal((await readdir(join(dir, 'records'))).length, 2);
+    assert.equal((await readdir(join(dir, 'source'))).length, 4);
     for (const output of outputs) {
       assert.equal(output.status, 'pending-source-review');
+      assert.equal(dirname(output.files.png), join(dir, 'images'));
+      assert.equal(dirname(output.files.report), join(dir, 'records'));
+      assert.equal(dirname(output.files.scene), join(dir, 'source'));
+      assert.equal(dirname(output.files.svg), join(dir, 'source'));
       const report = JSON.parse(await readFile(output.files.report, 'utf8'));
       assert.equal(report.rasterizer, '@resvg/resvg-js@2.6.2');
       assert.deepEqual(report.files, output.files);
     }
     assert.deepEqual(await readFile(outputs[0].files.png), await readFile(outputs[1].files.png));
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test('CLI treats a record-only collision as an occupied group and keeps every artifact linked', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'yuanqu-record-collision-'));
+  try {
+    await mkdir(join(dir, 'records'));
+    const existing = join(dir, 'records', '头像.analysis.md');
+    await writeFile(existing, '已有识别记录');
+    const args = [join(root, 'scripts/render.mjs'), join(root, 'references/examples/object.json'), '--out-dir', dir, '--name', '头像', '--size', '512'];
+    const output = JSON.parse((await run(process.execPath, args)).stdout);
+    assert.equal(basename(output.files.png), '头像-2.png');
+    assert.equal(basename(output.files.report), '头像-2.report.json');
+    assert.equal(basename(output.files.scene), '头像-2.scene.json');
+    assert.equal(basename(output.files.svg), '头像-2.svg');
+    assert.equal(await readFile(existing, 'utf8'), '已有识别记录');
+    assert.deepEqual((await readdir(join(dir, 'source'))).sort(), ['头像-2.scene.json', '头像-2.svg']);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
 
@@ -202,6 +226,8 @@ test('missing native dependency is explicit, while check and SVG-only work witho
     await assert.rejects(run(process.execPath, [join(dir, 'render.mjs'), scene, '--out-dir', out]), error => /PNG renderer is missing/.test(error.stderr));
     const result = await run(process.execPath, [join(dir, 'render.mjs'), scene, '--out-dir', out, '--svg-only']);
     assert.equal(JSON.parse(result.stdout).files.png, undefined);
-    assert.equal((await readdir(out)).length, 3);
+    assert.deepEqual((await readdir(out)).sort(), ['records', 'source']);
+    assert.equal((await readdir(join(out, 'source'))).length, 2);
+    assert.equal((await readdir(join(out, 'records'))).length, 1);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });

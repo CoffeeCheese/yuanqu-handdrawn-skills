@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import { readFile, mkdir, writeFile, access, unlink } from 'node:fs/promises';
-import { basename, extname, join, resolve } from 'node:path';
+import { readFile, readdir, mkdir, writeFile, access, unlink } from 'node:fs/promises';
+import { basename, dirname, extname, join, resolve } from 'node:path';
 import { renderScene } from './engine.mjs';
 
-const usage = 'node scripts/render.mjs SCENE.json --out-dir DIR [--name NAME] [--size 512|1024|2048] [--svg-only|--check]';
+const usage = 'node scripts/render.mjs SCENE.json [--out-dir OUTPUT_ROOT] [--name NAME] [--size 512|1024|2048] [--svg-only|--check]\nOutput root defaults to ./output; images/ holds PNG, source/ holds scene and SVG, records/ holds reports.';
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) { console.log(usage); return; }
   const file = args.shift();
   if (!file || file.startsWith('--')) throw new Error(usage);
-  const options = { outDir: 'output/yuanqu-handdrawn', size: 1024, svgOnly: false, check: false };
+  const options = { outDir: 'output', size: 1024, svgOnly: false, check: false };
   while (args.length) {
     const flag = args.shift();
     if (flag === '--svg-only') options.svgOnly = true;
@@ -41,32 +41,39 @@ async function main() {
     report.runtime = { node: process.version, platform: process.platform, arch: process.arch };
   } else if (!png && input.version !== 2) report.rasterizer = null;
   const dir = resolve(options.outDir);
-  await mkdir(dir, { recursive: true });
   const base = options.name ?? `${basename(file, extname(file)).replace(/\.scene$/, '')}-yuanqu`;
   const stem = base.replace(/[^\p{L}\p{N}._-]+/gu, '-').replace(/^\.+/, '').slice(0, 120) || 'yuanqu';
-  const extensions = ['scene.json', 'svg', 'report.json', ...(png ? ['png'] : [])];
-  let prefix;
+  const pathsFor = name => ({
+    scene: join(dir, 'source', `${name}.scene.json`),
+    svg: join(dir, 'source', `${name}.svg`),
+    report: join(dir, 'records', `${name}.report.json`),
+    ...(png ? { png: join(dir, 'images', `${name}.png`) } : {})
+  });
+  await Promise.all([...new Set(Object.values(pathsFor(stem)).map(dirname))].map(path => mkdir(path, { recursive: true })));
+  const existing = (await Promise.all(['images', 'records', 'source'].map(async folder => {
+    try { return await readdir(join(dir, folder)); }
+    catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  }))).flat();
+  let files;
   // Reserve each artifact with exclusive creation, so concurrent runs never overwrite.
   for (let version = 1; version <= 10000; version++) {
-    const candidate = join(dir, version === 1 ? stem : `${stem}-${version}`);
+    const name = version === 1 ? stem : `${stem}-${version}`;
+    if (existing.some(file => file.startsWith(`${name}.`))) continue;
+    const candidate = pathsFor(name);
     const reserved = [];
     try {
       // Reserve the PNG name even in SVG-only mode to keep a future export clear.
-      try { await access(`${candidate}.png`); continue; } catch (e) { if (e.code !== 'ENOENT') throw e; }
-      for (const extension of extensions) {
-        const path = `${candidate}.${extension}`;
+      try { await access(join(dir, 'images', `${name}.png`)); continue; } catch (e) { if (e.code !== 'ENOENT') throw e; }
+      for (const path of Object.values(candidate)) {
         await writeFile(path, '', { flag: 'wx' }); reserved.push(path);
       }
-      prefix = candidate; break;
+      files = candidate; break;
     } catch (error) {
       await Promise.all(reserved.map(path => unlink(path)));
       if (error.code !== 'EEXIST') throw error;
     }
   }
-  if (!prefix) throw new Error('Could not reserve an output name');
-  const files = {
-    scene: `${prefix}.scene.json`, svg: `${prefix}.svg`, report: `${prefix}.report.json`, ...(png ? { png: `${prefix}.png` } : {})
-  };
+  if (!files) throw new Error('Could not reserve an output name');
   report.files = files;
   try {
     await writeFile(files.scene, JSON.stringify(scene, null, 2) + '\n');

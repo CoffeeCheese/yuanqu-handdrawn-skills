@@ -32,7 +32,7 @@ npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill y
 
 ```text
 使用 $yuanqu-handdrawn 将这张原图转换为圆趣手绘插画。
-保留人物数量、发型、头朝向、姿态和真实遮挡，保存到 ./output/yuanqu-handdrawn/。
+保留人物数量、发型、头朝向、姿态和真实遮挡，输出根目录使用 ./output/。
 ```
 
 有自己认可的风格成品时，同时提供并明确角色：
@@ -63,10 +63,19 @@ npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill y
 
 ## 输出与稳定性
 
-默认请求一张 1:1、1024×1024 的纯插画，记录工具实际生成尺寸。用户指定目录优先，否则保存到当前目录的 `output/yuanqu-handdrawn/`，重名编号：
+默认请求一张 1:1、1024×1024 的纯插画，记录工具实际生成尺寸。默认输出根为当前目录的 `output/`；指定普通目标目录时在其中建立 `output/`，明确指定输出根时直接采用。具体规则见 [输出目录](skills/yuanqu-handdrawn/references/output-layout.md)。
 
-- `<原图名>-yuanqu.png`：选中的成品；需要 JPG 时可指定。
-- `<原图名>-yuanqu.generation.md`：输入与参考路径、实际指令、使用的能力、可见参数、尝试次数、主体与风格核对结果。
+```text
+output/
+├── images/       成品 PNG／JPG
+├── records/      生成指令、观察及核对记录
+├── source/       实际产生的 SVG、绘图数据与代码
+└── work/         按任务保存的候选或临时文件，按需创建
+```
+
+模型生成保存 `images/<原图名>-yuanqu.png` 和 `records/<原图名>-yuanqu.generation.md`。代码绘图另将 scene／SVG 放 `source/`，report／analysis 放 `records/`。同一成品的关联文件共享名称，重名时整组编号。没有产生源码时无需建立 `source/`。
+
+例如，目标目录为 `/Users/dengs/Desktop/自媒体/redBook/` 时，成品位于其下的 `output/images/`，记录位于 `output/records/`。这些规则用于后续输出，已有文件整理需另行指定。
 
 每张先生成一次，有具体偏差时最多修正一次；仍有偏差会说明。未核对成品时不记为通过。用户可继续提出下一轮修改。
 
