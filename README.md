@@ -1,6 +1,8 @@
 # 圆趣手绘
 
-将人物、动漫角色、物品和旅行照片转换为灰蓝／蜜桃橘的正方形插画。模型读取原图，固定 SVG 引擎绘制宽圆面罩、胶囊眼和白纸留白，优先保证几何一致。
+将原图转换为灰蓝／蜜桃橘的正方形插画。当前模型查看原图并拟合绘图数据，本地 Node.js 与 SVG/PNG 渲染器绘制，不调用外部视觉模型或图像生成 API。
+
+默认提供**代码手绘实验**：保留主体轮廓、衣服与必要姿势，以固定种子的颜料颗粒靠近手绘质感；明确要求几何一致时使用原有图标模式。手绘实验目前只验证了一张真实坐姿肖像，不能保证达到图像模型的细腻程度。
 
 通过 `npx skills add` 安装，在 Codex 中使用 `$yuanqu-handdrawn` 调用。
 
@@ -47,7 +49,20 @@ npm --prefix "$HOME/.agents/skills/yuanqu-handdrawn" ci --ignore-scripts --no-au
 
 也可以明确指定多张原图或一个目录；目录默认只处理直属图片，每张独立生成和验收。仅需要分析时，说明“只分析，不生成”。
 
-用户原图提供身份、姿势和场景内容；内置头像仅提供几何语言。默认输出一张 1024×1024 PNG，背景为白纸；每张最多一次数据修正。需要 JPG 时明确提出。
+用户原图提供身份、姿势和场景内容；旧成品只提供手绘语言。默认输出一张 1024×1024 PNG，背景为白纸；每张最多一次数据修正。需要 JPG 时明确提出。
+
+### 本地代码手绘实验
+
+```text
+使用 $yuanqu-handdrawn 将原图转换为接近参考成品的圆趣手绘插画。
+仅使用当前模型和本地代码，保留人物的坐姿、双手及识别特征，不要求固定几何比例。
+```
+
+使用 [代码手绘规则](skills/yuanqu-handdrawn/references/code-handdrawn.md) 和 V2 分层数值曲线。绘图阶段无需联网或 API 密钥；同一份数据、种子、尺寸和渲染环境可复现，重新识别与拟合仍可能因模型而变化。胶囊眼、颜料颗粒与轮廓分别处理，防止纹理破坏主要五官。
+
+下面是本轮真实照片的代码实验。保留了眼镜、领饰、坐姿、交叠双手及必要座椅；发型、衣纹和椅背花纹仍比旧成品概括，风格相似度等待用户确认。
+
+![本地代码手绘实验](assets/previews/paint-portrait.png)
 
 ### 几何样例
 
@@ -67,7 +82,7 @@ npm --prefix "$HOME/.agents/skills/yuanqu-handdrawn" ci --ignore-scripts --no-au
 | 有人的旅游照 | 保留主要旅行者及互动，背景概括为一个浅色地标 |
 | 无人风景 | 用 3–7 个圆润块面保留地标或空间结构，不添加人物 |
 
-完整规范见 [技能入口](skills/yuanqu-handdrawn/SKILL.md)、[风格规则](skills/yuanqu-handdrawn/references/style.md) 和 [构图规则](skills/yuanqu-handdrawn/references/compositions.md)。
+上表为固定几何模式的已实现语法；代码手绘实验使用自由分层曲线，目前只有单人坐姿肖像经过真实样张检查。完整规范见 [技能入口](skills/yuanqu-handdrawn/SKILL.md)、[代码手绘规则](skills/yuanqu-handdrawn/references/code-handdrawn.md)、[几何风格规则](skills/yuanqu-handdrawn/references/style.md) 和 [几何构图规则](skills/yuanqu-handdrawn/references/compositions.md)。
 
 ## 查看、更新与移除
 
@@ -93,12 +108,12 @@ npx skills remove yuanqu-handdrawn --global --agent codex --yes
 默认保存到当前工作目录的 `output/yuanqu-handdrawn/`，也可指定其它目录。重名自动编号，每张保留：
 
 - `.png`：发布与预览用成品。
-- `.svg`：可编辑的几何图形。
+- `.svg`：可编辑的轮廓；V2 另含嵌入 PNG 的颗粒层。
 - `.scene.json`：规范化绘图数据和纹理种子。
-- `.report.json`：几何校验、版本和原图核对结果。
+- `.report.json`：数据校验、版本、原图核对与风格审核结果。
 - `.analysis.md`：本次识别指令与观察记录。
 
-固定绘图数据、种子、引擎版本和渲染环境后可复现；重新识别原图可能得到不同数据。模型负责识别身份与遮挡，程序负责几何规则；通过几何校验仍需核对原图，复杂发型与多人互动可能需要修正。旅游与风景已有离线样例，尚无用户原图实测基线。
+固定绘图数据、种子、引擎版本和渲染环境后可复现；重新识别原图可能得到不同数据。模型负责识别身份、遮挡与轮廓，程序负责稳定绘制；通过数据校验仍需核对原图和目标风格。复杂发型与多人互动可能需要修正；旅游与风景尚无用户原图实测基线。
 
 ## 开发
 
@@ -110,9 +125,12 @@ npm test
 
 # 使用合成数据导出一份预览
 node scripts/render.mjs references/examples/portrait.json --out-dir ../../output/demo
+
+# 使用已保存的肖像曲线验证本地代码手绘
+node scripts/render.mjs references/examples/paint-portrait.json --out-dir ../../output/demo --name paint-portrait
 ```
 
-SVG 生成和数据校验的引擎本身支持 Node.js 20 或更高。当前测试覆盖五类分支、胶囊比例、遮挡、闭眼、白边、色系、可重复 PNG 与重名保护。
+绘图引擎支持 Node.js 20 或更高。V1 的 SVG 生成与校验只需 Node；V2 颗粒层使用 Resvg，即使仅导出 SVG 也要准备依赖。测试覆盖原有五类几何分支以及 V2 材质复现、眼睛保护、颜料叠加和数据验证。
 
 技能的脚本、参考图、规则、示例、依赖清单和 MIT 许可均位于 [skills/yuanqu-handdrawn/](skills/yuanqu-handdrawn/)，安装后不依赖源码仓库的其它目录。
 

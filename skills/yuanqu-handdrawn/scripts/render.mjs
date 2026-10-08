@@ -22,10 +22,16 @@ async function main() {
       else options.size = Number(value);
     } else throw new Error(`Unknown argument ${flag}`);
   }
-  const { scene, svg, report } = renderScene(JSON.parse(await readFile(resolve(file), 'utf8')), { size: options.size });
+  const input = JSON.parse(await readFile(resolve(file), 'utf8'));
+  let result;
+  if (input.version === 2) {
+    const { describePaintScene, renderPaintScene } = await import('./paint.mjs');
+    result = options.check ? describePaintScene(input, { size: options.size }) : await renderPaintScene(input, { size: options.size });
+  } else result = renderScene(input, { size: options.size });
+  const { scene, svg, report } = result;
   if (options.check) { console.log(JSON.stringify(report, null, 2)); return; }
-  let png;
-  if (!options.svgOnly) {
+  let png = options.svgOnly ? undefined : result.png;
+  if (!options.svgOnly && !png) {
     let Resvg;
     try { ({ Resvg } = await import('@resvg/resvg-js')); }
     catch { throw new Error('PNG renderer is missing. Run npm ci in this skill directory; --svg-only explicitly saves editable files without a PNG.'); }
@@ -33,7 +39,7 @@ async function main() {
     png = raster.asPng();
     report.rasterizer = '@resvg/resvg-js@2.6.2';
     report.runtime = { node: process.version, platform: process.platform, arch: process.arch };
-  } else report.rasterizer = null;
+  } else if (!png && input.version !== 2) report.rasterizer = null;
   const dir = resolve(options.outDir);
   await mkdir(dir, { recursive: true });
   const base = options.name ?? `${basename(file, extname(file)).replace(/\.scene$/, '')}-yuanqu`;
