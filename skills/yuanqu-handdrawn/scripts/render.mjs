@@ -3,7 +3,7 @@ import { readFile, readdir, mkdir, writeFile, access, unlink } from 'node:fs/pro
 import { basename, dirname, extname, join, resolve } from 'node:path';
 import { renderScene } from './engine.mjs';
 
-const usage = 'node scripts/render.mjs SCENE.json [--out-dir OUTPUT_ROOT] [--name NAME] [--size 512|1024|2048] [--svg-only|--check]\nOutput root defaults to ./yuanqu-handdrawn; images/ holds PNG, source/ holds scene and SVG, records/ holds reports.';
+const usage = 'node scripts/render.mjs SCENE.json [--out-dir OUTPUT_ROOT] [--name NAME] [--size PIXELS] [--svg-only|--check]\nCanvas V3: integer size 256–2048; V1/V2: 512|1024|2048. --svg-only is V1/V2 only.\nOutput root defaults to ./yuanqu-handdrawn; images/ holds PNG, source/ holds scene and Canvas HTML or SVG, records/ holds reports.';
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes('--help')) { console.log(usage); return; }
@@ -24,11 +24,15 @@ async function main() {
   }
   const input = JSON.parse(await readFile(resolve(file), 'utf8'));
   let result;
-  if (input.version === 2) {
+  if (input.version === 3) {
+    if (options.svgOnly) throw new Error('Canvas V3 produces PNG and HTML; --svg-only is supported only by V1/V2.');
+    const { describeCanvasScene, renderCanvasScene } = await import('./canvas.mjs');
+    result = options.check ? describeCanvasScene(input, { size: options.size }) : await renderCanvasScene(input, { size: options.size });
+  } else if (input.version === 2) {
     const { describePaintScene, renderPaintScene } = await import('./paint.mjs');
     result = options.check ? describePaintScene(input, { size: options.size }) : await renderPaintScene(input, { size: options.size });
   } else result = renderScene(input, { size: options.size });
-  const { scene, svg, report } = result;
+  const { scene, svg, html, report } = result;
   if (options.check) { console.log(JSON.stringify(report, null, 2)); return; }
   let png = options.svgOnly ? undefined : result.png;
   if (!options.svgOnly && !png) {
@@ -45,7 +49,8 @@ async function main() {
   const stem = base.replace(/[^\p{L}\p{N}._-]+/gu, '-').replace(/^\.+/, '').slice(0, 120) || 'yuanqu';
   const pathsFor = name => ({
     scene: join(dir, 'source', `${name}.scene.json`),
-    svg: join(dir, 'source', `${name}.svg`),
+    ...(svg ? { svg: join(dir, 'source', `${name}.svg`) } : {}),
+    ...(html ? { html: join(dir, 'source', `${name}.canvas.html`) } : {}),
     report: join(dir, 'records', `${name}.report.json`),
     ...(png ? { png: join(dir, 'images', `${name}.png`) } : {})
   });
@@ -77,7 +82,8 @@ async function main() {
   report.files = files;
   try {
     await writeFile(files.scene, JSON.stringify(scene, null, 2) + '\n');
-    await writeFile(files.svg, svg);
+    if (svg) await writeFile(files.svg, svg);
+    if (html) await writeFile(files.html, html);
     if (png) await writeFile(files.png, png);
     await writeFile(files.report, JSON.stringify(report, null, 2) + '\n');
   } catch (error) {

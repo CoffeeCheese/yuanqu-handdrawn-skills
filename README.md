@@ -2,11 +2,11 @@
 
 把照片或动漫原图转换为灰蓝／蜜桃橘、胶囊眼和白纸留白的正方形手绘插画。当前模型理解原图与风格参考，优先使用会话内置图像生成完成绘制。
 
-默认流程关注风格、身份和姿态：模型自由决定脸型、眼距、发块和笔触，无需 SVG、坐标数据或固定几何比例。不配置外部 API 或密钥，也不承诺指定图像模型。需要离线代码绘图时可明确选择保留的旧绘图模块。
+流程关注风格、身份和姿态：优先内置图像生成；会话没有该能力时自动使用本地 **JS + Canvas**。当前模型负责看图与构图，Canvas 负责自由曲线、叠色和分区干性颜料，不强制固定脸型或眼距，不通过 SVG 中转。两种方式都不配置外部图像 API 或密钥。
 
 ## 安装
 
-通过 `npx skills add` 管理，在 Codex 中使用 `$yuanqu-handdrawn` 调用。准备 Node.js 22.20 或更高、npm 和 Git；运行环境需要能查看图片、保存文件，并提供内置图像生成能力。
+通过 `npx skills add` 管理，在 Codex 中使用 `$yuanqu-handdrawn` 调用。准备 Node.js 22.20 或更高、npm 和 Git；运行环境需要能查看图片、保存文件。内置图像生成可选，缺少时使用 Canvas 备用流程。
 
 本仓库为 **private**，安装者需有访问权限及可用的 GitHub 认证。已有 Git 凭据或 SSH 配置可直接使用；GitHub CLI 用户可先执行 `gh auth status` 检查登录。
 
@@ -24,7 +24,7 @@ HTTPS 认证不可用、已配置 GitHub SSH 时可使用：
 npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill yuanqu-handdrawn --agent codex --global --yes
 ```
 
-默认模型生成无需安装本仓库的 npm 渲染依赖。安装 skill 本身不会为会话增加图像生成能力；环境缺少该能力时会说明未完成成图并提供生成指令，代码绘图需明确选择。
+内置模型生成无需安装本仓库的 npm 渲染依赖。安装 skill 不会为会话增加图像能力；Canvas 分支首次执行时在实际技能目录运行 `npm ci --ignore-scripts --no-audit --no-fund`。安装依赖需要 npm 网络或缓存，之后渲染离线，不调用外部模型。
 
 ## 使用
 
@@ -69,17 +69,17 @@ npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill y
 yuanqu-handdrawn/
 ├── images/       成品 PNG／JPG
 ├── records/      生成指令、观察及核对记录
-├── source/       实际产生的 SVG、绘图数据与代码
+├── source/       Canvas HTML、绘图数据与实际源码；历史模式的 SVG
 └── work/         按任务保存的候选或临时文件，按需创建
 ```
 
-模型生成保存 `images/<原图名>-yuanqu.png` 和 `records/<原图名>-yuanqu.generation.md`。代码绘图另将 scene／SVG 放 `source/`，report／analysis 放 `records/`。同一成品的关联文件共享名称，重名时整组编号。没有产生源码时无需建立 `source/`。
+模型生成保存 `images/<原图名>-yuanqu.png` 和 `records/<原图名>-yuanqu.generation.md`。Canvas 将 scene／自包含 HTML 放 `source/`，report／analysis 放 `records/`。同一成品的关联文件共享名称，重名时整组编号。没有产生源码时无需建立 `source/`。
 
 例如，目标目录为 `/Users/dengs/Desktop/自媒体/redBook/` 时，成品位于其下的 `yuanqu-handdrawn/images/`，记录位于 `yuanqu-handdrawn/records/`。用户明确选择的旧 `output/` 仍受支持；默认命名变更不会自动移动历史文件，整理已有目录时同步修正记录路径。
 
 每张先生成一次，有具体偏差时最多修正一次；仍有偏差会说明。未核对成品时不记为通过。用户可继续提出下一轮修改。
 
-系列稳定性依靠同一套认可参考、同类主体固定参考选择、核心要求和生成后核对；不保证重生成逐像素一致，也不假设工具能固定模型或种子。已试验坐姿肖像、动漫角色和四张人物原图。本轮四组成品与历史参考的对比暴露了脸部纹理、发块、白衣结构和背景删减差异；据此更新了规则，更新后的图像效果尚未重新生成验证。
+系列稳定性依靠同一套认可参考、同类主体固定参考选择、核心要求和生成后核对。内置生成不保证重生成逐像素一致；Canvas 固定 scene、种子、尺寸和运行环境后可重复生成相同 PNG，重新识别与拟合仍可能变化。已试验坐姿肖像、动漫角色及四张人物原图，并对卷发工作服和白色航天服完成了模型重试与 Canvas 实图对照；风格仍有差异，不等同于用户确认通过。
 
 ## 更新与移除
 
@@ -99,11 +99,35 @@ npx skills remove yuanqu-handdrawn --global --agent codex --yes
 
 项目安装的查看和移除去掉 `--global`；更新使用 `--project`。更新前将个人改动和输出保存在技能目录之外。安装命令参考 [skills CLI 官方说明](https://github.com/vercel-labs/skills)，本仓库此前使用 CLI 1.7.1 验证。
 
-## 可选的本地代码绘图
+## 无图像生成时的 Canvas 备用流程
 
-仅在明确要求代码／离线绘图时读取 [代码手绘实验](skills/yuanqu-handdrawn/references/code-handdrawn.md)；明确要求固定几何复现时读取 [固定几何流程](skills/yuanqu-handdrawn/references/legacy-geometry.md)。这些模式可复用已有 scene 数据，需准备锁定的本地渲染依赖。其数据、SVG 和种子要求不适用于默认模型生成。
+无需额外确认，skill 在能力缺失时说明采用 Canvas，并继续看图、编排数据、绘制、核对与保存。也可以主动选择：
 
-[历史代码肖像样张](assets/previews/paint-portrait.png) 与 [几何样例](assets/previews/portrait.png) 仅展示旧绘图模块能力。代码颗粒与模型生成的手绘笔触可能不同。
+```text
+使用 $yuanqu-handdrawn，用本地 JS + Canvas 绘制这张原图，
+图2只作为风格参考；保留真实遮挡，保存到指定目录。
+```
+
+新分支使用 V3 scene，脸部与衣发采用不同材质，胶囊眼保持实心，干笔方向、疏密与轮廓起伏由固定种子控制。宽笔触和衣纹由模型按原图编排曲线；脚本不自行识别照片。采用锁定的 [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) 在 Node 中导出 PNG，同时保存可直接离线打开的 HTML。详细数据与操作见 [Canvas 备用绘制](skills/yuanqu-handdrawn/references/canvas-fallback.md)。
+
+复绘包内样例：
+
+```bash
+cd skills/yuanqu-handdrawn
+npm ci --ignore-scripts --no-audit --no-fund
+node scripts/render.mjs references/examples/canvas-curly-hair.json --size 1254
+node scripts/render.mjs references/examples/canvas-eva-suit.json --size 1254
+```
+
+样例表达两张实图的拟合，不能直接套成其它人物：
+
+| 卷发工作服 Canvas 样张 | 白色航天服 Canvas 样张 |
+| --- | --- |
+| ![卷发工作服](assets/previews/canvas-curly-hair.png) | ![白色航天服](assets/previews/canvas-eva-suit.png) |
+
+与最近两张模型生成图相比，Canvas 能保持圆脸胶囊、分区材质、白衣结构及必要场景，但轮廓更规整、卷发与衣纹更概括、笔触分布更均匀，尚未达到相同完成度。两种后端不会被记作完全相同的画法；继续调整时复用已保存的数据。
+
+已有 V2 scene 按 [历史代码手绘](skills/yuanqu-handdrawn/references/code-handdrawn.md) 复绘；明确要求固定几何复现时使用 [固定几何流程](skills/yuanqu-handdrawn/references/legacy-geometry.md)。旧文件继续兼容，其比例规则不进入 V3 或默认模型生成。
 
 ## 设计与开发
 
@@ -112,13 +136,13 @@ npx skills remove yuanqu-handdrawn --global --agent codex --yes
 | 设计概念 | 本项目的选择 |
 | --- | --- |
 | Interface | 原图＋可选风格参考＋可选输出目录，返回成品与生成记录 |
-| Implementation | 参考角色、风格要求、生成指令、核对、一次修正及保存集中在技能内部 |
-| Seam | 生成执行处：使用会话实际可用的图像能力；明确选择代码时切换到旧绘图模块 |
-| Adapter | 会话内置图像生成与已有本地渲染流程，两者实际存在，按用户选择使用 |
+| Implementation | 参考角色、识别与风格要求、后端选择、核对、一次修正及保存集中在技能内部 |
+| Seam | 生成执行处：根据会话实际能力与用户选择执行 |
+| Adapter | 内置图像生成与本地 JS + Canvas；V1/V2 供历史数据复绘 |
 
-Depth 来自小 Interface 隐藏识别、风格约束和交付细节；Leverage 是不同图片复用同一流程，Locality 是默认规则集中在 [SKILL.md](skills/yuanqu-handdrawn/SKILL.md)。工具参数集中在 [内置生成约定](skills/yuanqu-handdrawn/references/model-generation.md)，旧代码规范仅按需读取。
+Depth 来自小 Interface 隐藏识别、风格约束和交付细节；Leverage 是不同图片复用同一流程，Locality 是共用规则集中在 [SKILL.md](skills/yuanqu-handdrawn/SKILL.md)。工具参数放在 [内置生成约定](skills/yuanqu-handdrawn/references/model-generation.md)，Canvas 数据和材质放在其分支参考。Node 与导出的 HTML 执行同一份 Canvas 核心代码。
 
-修改规则时检查默认路径不加载固定几何规范，参考图只影响风格，能力缺失时不偷偷切换执行方式。旧渲染脚本保留回归检查：
+修改规则时检查参考图只影响风格，能力缺失能到达 Canvas 分支，执行方式如实记录。新分支与历史渲染均有回归检查：
 
 ```bash
 cd skills/yuanqu-handdrawn
@@ -126,7 +150,7 @@ npm ci --ignore-scripts --no-audit --no-fund
 npm test
 ```
 
-离线脚本测试验证旧代码模块，不验证模型生成质量。新生成效果应以真实原图及参考成品逐例比较。
+测试验证复绘、分区材质、遮挡、数据合法性、HTML 导出和输出文件分组，不替代视觉审核。图像效果仍以实际原图与参考逐例比较。
 
 ## 许可证
 

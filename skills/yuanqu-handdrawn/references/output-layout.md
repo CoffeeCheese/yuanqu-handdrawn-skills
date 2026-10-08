@@ -25,7 +25,7 @@ yuanqu-handdrawn/
 按实际产物创建子目录。输出根目录只承载分类目录，成品目录只放选中图片。
 
 - 模型生成：`images/<名称>.png` 与 `records/<名称>.generation.md`。模型没有返回绘图源码时，只保存实际图片和记录，不为凑目录构造 SVG、scene 或代码。
-- 本地代码绘图：PNG／JPG 放 `images/`；`.scene.json`、`.svg` 及本次另写的绘图代码放 `source/`；`.report.json`、`.analysis.md` 放 `records/`。
+- Canvas 绘图：PNG／JPG 放 `images/`；`.scene.json` 与自包含的 `.canvas.html` 放 `source/`；`.report.json`、`.analysis.md` 放 `records/`。历史 V1/V2 另保存 `.svg`，V3 不构造 SVG。
 - 候选图与临时数据需要留存时放 `work/<任务名>/`，记录选中的成品和候选的关系。工具已经保存的候选可在记录里引用实际路径，无需再次复制。用户原图默认只记录来源路径。
 
 同一成品的各类文件共享一个名称，重名时统一编号，不能分别编号导致图片与记录错配。任何关联文件已有同名时，为整组选择新名称；写入采用不覆盖已有文件的方式。本地渲染 CLI 会为自己输出的整组文件预留名称；agent 添加 `.analysis.md` 时也须遵守同名关联规则。

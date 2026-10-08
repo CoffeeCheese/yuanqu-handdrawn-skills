@@ -1,6 +1,6 @@
-# Scene JSON
+# Scene JSON（V1 固定几何）
 
-唯一可执行格式，机器事实以 `scripts/engine.mjs` 校验为准。未列字段不支持，不提供脚本、原始 SVG、图片、文字绘制、外部资源或任意颜色。
+本文件只描述 V1，机器事实以 `scripts/engine.mjs` 校验为准。Canvas V3 见 [canvas-fallback.md](canvas-fallback.md)，历史 paint V2 见 [code-handdrawn.md](code-handdrawn.md)。未列字段不适用于 V1，不提供脚本、原始 SVG、图片、文字绘制、外部资源或任意颜色。
 
 ## 顶层
 
