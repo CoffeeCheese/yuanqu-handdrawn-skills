@@ -1,116 +1,152 @@
 # 圆趣手绘
 
-把照片或动漫原图转换为灰蓝／蜜桃橘、胶囊眼和白纸留白的正方形手绘插画。当前模型理解原图与风格参考，优先使用会话内置图像生成完成绘制。
+<p align="center">
+  <a href="assets/examples/wulin-waizhuan/images/01-tong-xiangyu-yuanqu.png"><img src="assets/examples/wulin-waizhuan/images/01-tong-xiangyu-yuanqu.png" width="18%" alt="佟湘玉圆趣手绘：保留盘发、鬓发、花饰和交领"></a>
+  <a href="assets/examples/wulin-waizhuan/images/04-lv-xiucai-yuanqu.png"><img src="assets/examples/wulin-waizhuan/images/04-lv-xiucai-yuanqu.png" width="18%" alt="吕秀才圆趣手绘：保留托腮动作、发髻与宽袖"></a>
+  <a href="assets/examples/wulin-waizhuan/images/07-mo-xiaobei-yuanqu.png"><img src="assets/examples/wulin-waizhuan/images/07-mo-xiaobei-yuanqu.png" width="18%" alt="莫小贝圆趣手绘：用闭眼弧保留眯眼状态，保留发辫和围巾"></a>
+  <a href="assets/examples/wulin-waizhuan/images/12-qian-zhanggui-yuanqu.png"><img src="assets/examples/wulin-waizhuan/images/12-qian-zhanggui-yuanqu.png" width="18%" alt="钱掌柜圆趣手绘：保留高帽纹样与深色胡须"></a>
+  <a href="assets/examples/wulin-waizhuan/images/19-gongsun-wulong-yuanqu.png"><img src="assets/examples/wulin-waizhuan/images/19-gongsun-wulong-yuanqu.png" width="18%" alt="公孙乌龙圆趣手绘：保留灰白长须、侧发遮挡和淡砖墙线索"></a>
+</p>
 
-流程关注风格、身份和姿态：优先内置图像生成；会话没有该能力时自动使用本地 **JS + Canvas**。当前模型负责看图与构图，Canvas 负责自由曲线、叠色和分区干性颜料，不强制固定脸型或眼距，不通过 SVG 中转。两种方式都不配置外部图像 API 或密钥。
+把照片或动漫原图画成圆脸、胶囊眼的手绘插画。灰蓝和蜜桃橘铺出大色块，衣发带着干笔纹理，四周留出白纸。人物的发型、服装、头向、动作和真实遮挡会保留下来，适合做头像或一组人物插画。
+
+提供原图就能开始。模型负责看图和安排构图，优先使用会话内置图像生成；没有图像生成能力时，会自动改用本地 JS + Canvas。两种方式都不需要配置外部图像 API 或密钥。
+
+<p align="center">
+  <a href="#examples">看效果</a> · <a href="#install">安装</a> · <a href="#usage">开始使用</a> · <a href="#output">查看输出</a>
+</p>
+
+<a id="examples"></a>
+
+## 实际效果：原图 → 圆趣手绘
+
+这 5 张插画于 2026-10-12 使用本仓库 skill 生成。左列原图从《武林外传》四组对照长图左侧裁出，右列是这次重新生成的成品。五张图都使用会话内置图像生成，并沿用同一张[包内风格参考](skills/yuanqu-handdrawn/assets/handdrawn-reference.jpg)，实际输出为 1254×1254 PNG。
+
+| 原图 | 圆趣手绘 |
+| :---: | :---: |
+| <img src="assets/examples/wulin-waizhuan/originals/01-tong-xiangyu.png" width="360" alt="佟湘玉原图：盘发、红衣与蓝色交领"><br>**佟湘玉** | <img src="assets/examples/wulin-waizhuan/images/01-tong-xiangyu-yuanqu.png" width="360" alt="佟湘玉圆趣手绘：保留盘发、鬓发、花饰和交领"><br>盘发、花饰与垂落鬓发 · [生成记录](assets/examples/wulin-waizhuan/records/01-tong-xiangyu-yuanqu.generation.md) |
+| <img src="assets/examples/wulin-waizhuan/originals/04-lv-xiucai.png" width="360" alt="吕秀才原图：歪头并用一只手托住脸颊"><br>**吕秀才** | <img src="assets/examples/wulin-waizhuan/images/04-lv-xiucai-yuanqu.png" width="360" alt="吕秀才圆趣手绘：保留托腮动作、发髻与宽袖"><br>歪头、单手托腮与遮挡 · [生成记录](assets/examples/wulin-waizhuan/records/04-lv-xiucai-yuanqu.generation.md) |
+| <img src="assets/examples/wulin-waizhuan/originals/07-mo-xiaobei.png" width="360" alt="莫小贝原图：笑得眯起双眼、红色发绳与浅色围巾"><br>**莫小贝** | <img src="assets/examples/wulin-waizhuan/images/07-mo-xiaobei-yuanqu.png" width="360" alt="莫小贝圆趣手绘：用闭眼弧保留眯眼状态，保留发辫和围巾"><br>眯眼、细辫与围巾流苏 · [生成记录](assets/examples/wulin-waizhuan/records/07-mo-xiaobei-yuanqu.generation.md) |
+| <img src="assets/examples/wulin-waizhuan/originals/12-qian-zhanggui.png" width="360" alt="钱掌柜原图：高帽浅金纹样、古装交领与山羊胡"><br>**钱掌柜** | <img src="assets/examples/wulin-waizhuan/images/12-qian-zhanggui-yuanqu.png" width="360" alt="钱掌柜圆趣手绘：保留高帽纹样与深色胡须"><br>高帽、衣饰与深色山羊胡 · [生成记录](assets/examples/wulin-waizhuan/records/12-qian-zhanggui-yuanqu.generation.md) |
+| <img src="assets/examples/wulin-waizhuan/originals/19-gongsun-wulong.png" width="360" alt="公孙乌龙原图：侧转头部、灰白发髻与长胡须"><br>**公孙乌龙** | <img src="assets/examples/wulin-waizhuan/images/19-gongsun-wulong-yuanqu.png" width="360" alt="公孙乌龙圆趣手绘：保留灰白长须、侧发遮挡和淡砖墙线索"><br>三分之四头向、灰发与长须 · [生成记录](assets/examples/wulin-waizhuan/records/19-gongsun-wulong-yuanqu.generation.md) |
+
+[查看完整对比长图](assets/examples/wulin-waizhuan/comparison.jpg) · [原图与成品目录](assets/examples/wulin-waizhuan/) · [来源及裁剪坐标](assets/examples/wulin-waizhuan/records/sources.json)
+
+佟湘玉、吕秀才和钱掌柜各生成了 1 次。莫小贝和公孙乌龙各修正了 1 次，去掉补出的耳朵或发簪，并调整脸部纹理。成品已逐张核对，头发仍有偏暖、部分衣纹和胡须偏细碎的问题，各张生成记录里有具体说明。这里展示的是这次生成的效果，重新生成可能不同。
+
+<a id="install"></a>
 
 ## 安装
 
-通过 `npx skills add` 管理，在 Codex 中使用 `$yuanqu-handdrawn` 调用。准备 Node.js 22.20 或更高、npm 和 Git；运行环境需要能查看图片、保存文件。内置图像生成可选，缺少时使用 Canvas 备用流程。
-
-本仓库为 **private**，安装者需有访问权限及可用的 GitHub 认证。已有 Git 凭据或 SSH 配置可直接使用；GitHub CLI 用户可先执行 `gh auth status` 检查登录。
-
-推荐全局安装：
+使用前准备好 Node.js 22.20 或更高版本、npm 和 Git，Codex 会话需要能查看图片、保存文件。安装 skill 本身不会增加图像生成能力。
 
 ```bash
 npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex --global --yes
 ```
 
-只安装到当前项目时去掉 `--global`。技能位于全局 `~/.agents/skills/yuanqu-handdrawn/` 或项目内 `.agents/skills/yuanqu-handdrawn/`。
+只安装到当前项目时，去掉 `--global`。技能通常位于 `~/.agents/skills/yuanqu-handdrawn/` 或项目内 `.agents/skills/yuanqu-handdrawn/`。
 
-HTTPS 认证不可用、已配置 GitHub SSH 时可使用：
+本仓库目前为 private，安装时需要仓库访问权限和 GitHub 认证。
+
+<details>
+<summary>使用 SSH 安装</summary>
 
 ```bash
 npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill yuanqu-handdrawn --agent codex --global --yes
 ```
 
-内置模型生成无需安装本仓库的 npm 渲染依赖。安装 skill 不会为会话增加图像能力；Canvas 分支首次执行时在实际技能目录运行 `npm ci --ignore-scripts --no-audit --no-fund`。安装依赖需要 npm 网络或缓存，之后渲染离线，不调用外部模型。
+</details>
 
-## 使用
+使用内置图像生成时，不用安装渲染依赖。首次使用 Canvas 时，在实际技能目录执行 `npm ci --ignore-scripts --no-audit --no-fund`。安装需要 npm 网络或缓存，装好后可离线渲染。
 
-提供原图后发送：
+<a id="usage"></a>
+
+## 开始使用
+
+在 Codex 中附上原图，发送：
 
 ```text
-使用 $yuanqu-handdrawn 将这张原图转换为圆趣手绘插画。
-保留人物数量、发型、头朝向、姿态和真实遮挡，输出根目录使用 ./yuanqu-handdrawn/。
+使用 $yuanqu-handdrawn 将这张原图转换为圆趣手绘头像。
+保留发型、服装、头朝向、姿态和真实遮挡。
+输出根目录使用 ./yuanqu-handdrawn/。
 ```
 
-有自己认可的风格成品时，同时提供并明确角色：
+也可以直接提供本地图片路径，试试仓库里的吕秀才原图：
+
+```text
+使用 $yuanqu-handdrawn 处理 assets/examples/wulin-waizhuan/originals/04-lv-xiucai.png，
+保留歪头、单手托腮与手脸遮挡，输出根目录使用 ./yuanqu-handdrawn/。
+```
+
+<details>
+<summary>使用自己的风格参考，或一次处理多张图</summary>
+
+有喜欢的成品，可以一起提供，并说明哪张是原图、哪张是风格参考：
 
 ```text
 使用 $yuanqu-handdrawn：图1是原图，图2只作为风格参考。
-尽量接近图2的配色、圆润造型和蜡笔笔触，人物身份与姿势以图1为准。
-优先使用会话内置图像生成，保存到指定目录。
+配色、圆润造型和笔触接近图2，人物身份、朝向与动作以图1为准。
+输出根目录使用 ./yuanqu-handdrawn/。
 ```
 
-也接受多张原图或一个目录；目录默认只处理直属图片，每张独立生成和核对。只需分析时说明“只分析，不生成”。
+要一次处理多张图，可以提供多张图片或一个目录：
 
-未指定风格图时，从同一套包内历史成品选择题材接近的一张；航天服、卷发工作服、西装道具各有参考，其余使用下图。选择规则见 [风格校准](skills/yuanqu-handdrawn/references/style-calibration.md)。这些图片用于表达目标，不是新规则的生成测试结果：
+```text
+使用 $yuanqu-handdrawn 处理 ./photos/ 中的直属图片，统一使用包内风格参考。
+每张独立生成、核对，输出根目录使用 ./yuanqu-handdrawn/。
+```
 
-![圆趣手绘风格参考](skills/yuanqu-handdrawn/assets/handdrawn-reference.jpg)
+目录默认只处理直属图片，并排除本轮输出。只需要识别与提示词时，说明“只分析，不生成”。
 
-## 风格与构图
+</details>
 
-柔和圆脸、醒目的实心竖胶囊眼、干净的脸部留白，配合连续发块、蜡笔／彩铅颗粒和自然边缘。灰蓝和蜜桃为主，必要识别配件允许少量低饱和辅助色。完整要求见 [技能入口](skills/yuanqu-handdrawn/SKILL.md)。
+## 风格与保留范围
 
-风格参考还控制造型尺度、颜料浓度、分区材质和边缘。包内成品的脸部近似干净平涂，衣发有自然疏密的干性颜料与宽笔触；白衣保留可读灰蓝结构，必要旗帜和模型可组成浅色背景。生成后按 [风格校准](skills/yuanqu-handdrawn/references/style-calibration.md) 分项比较，参考人物的朝向、配件和动作仍不移植。
+人物和场景以原图为准，圆润造型、配色、颜料质感和细节多少则参照风格图。没有指定风格图时，会从包内选一张题材接近的参考；同类图片批量处理时沿用同一张，规则见[风格校准](skills/yuanqu-handdrawn/references/style-calibration.md)。
 
-| 输入 | 构图依据 |
+| 输入 | 处理方式 |
 | --- | --- |
-| 人物或人形动漫 | 保留发型、配件、头向、闭眼与遮挡；头像用头肩构图，必要坐姿、双手与服装可保留 |
-| 有人的旅游照 | 保留主要旅行者、互动及一个浅色场景线索 |
-| 无人风景或物品 | 保留可辨的空间或物品结构，保持原图内容与无拟人化 |
+| 人物或人形动漫 | 以饱满头脸为重心、简化身体；保留发型、配件、头向、动作和遮挡。睁眼用实心胶囊眼，闭眼遵循原图；省略鼻嘴、眉睫与写实眼细节 |
+| 有人的旅游照 | 保留主要旅行者、互动和一个浅色场景线索 |
+| 无人风景或物品 | 转换原有空间或物品结构，保持无拟人化 |
 
-## 输出与稳定性
+脸部接近干净平涂，头发和衣服保留顺着结构的宽笔触，干性颜料有疏有密。重要配件和衣领仍能辨认，成品不新增人物、道具、文字或水印。完整要求见 [SKILL.md](skills/yuanqu-handdrawn/SKILL.md)。
 
-默认请求一张 1:1、1024×1024 的纯插画，记录工具实际生成尺寸。默认输出根为当前目录的 `yuanqu-handdrawn/`；指定普通目标目录时在其中建立同名目录。指定该同名目录或明确指定其它输出根时直接采用，不重复嵌套。具体规则见 [输出目录](skills/yuanqu-handdrawn/references/output-layout.md)。
+<a id="output"></a>
+
+## 输出与核对
+
+默认请求一张 1:1、1024×1024 的插画，保存时会记录实际尺寸。默认输出根为当前目录的 `yuanqu-handdrawn/`。明确指定其它输出根时，会直接使用；指定普通目标目录时，会在下面建立同名目录，详见[输出目录约定](skills/yuanqu-handdrawn/references/output-layout.md)。
 
 ```text
 yuanqu-handdrawn/
-├── images/       成品 PNG／JPG
-├── records/      生成指令、观察及核对记录
-├── source/       Canvas HTML、绘图数据与实际源码；历史模式的 SVG
-└── work/         按任务保存的候选或临时文件，按需创建
+├── images/       选中的成品 PNG／JPG
+├── records/      生成指令、观察与核对记录
+├── source/       Canvas 绘图数据与自包含 HTML，按需创建
+└── work/         需要留存的候选与临时文件，按需创建
 ```
 
-模型生成保存 `images/<原图名>-yuanqu.png` 和 `records/<原图名>-yuanqu.generation.md`。Canvas 将 scene／自包含 HTML 放 `source/`，report／analysis 放 `records/`。同一成品的关联文件共享名称，重名时整组编号。没有产生源码时无需建立 `source/`。
+模型生成保存 `images/<原图名>-yuanqu.png` 和 `records/<原图名>-yuanqu.generation.md`，记录所用能力、实际指令、尝试次数和具体偏差。没有产生源码时，不必创建 `source/`。
 
-例如，目标目录为 `/Users/dengs/Desktop/自媒体/redBook/` 时，成品位于其下的 `yuanqu-handdrawn/images/`，记录位于 `yuanqu-handdrawn/records/`。用户明确选择的旧 `output/` 仍受支持；默认命名变更不会自动移动历史文件，整理已有目录时同步修正记录路径。
+每张先生成一个候选，再对照原图和风格参考，检查人物、遮挡、造型、配色，以及脸部和衣发的材质。发现具体偏差后，最多修正一次；还存在的差异会写进记录。需要继续调整时，可以提出下一轮修改。
 
-每张先生成一次，有具体偏差时最多修正一次；仍有偏差会说明。未核对成品时不记为通过。用户可继续提出下一轮修改。
+想让一组图保持一致，需要沿用同一套认可的参考和核对要求。模型重新生成时，不保证每个像素都相同。Canvas 在 scene、种子、尺寸和运行环境固定后可以重复复绘；重新识别和拟合原图，结果仍可能变化。
 
-系列稳定性依靠同一套认可参考、同类主体固定参考选择、核心要求和生成后核对。内置生成不保证重生成逐像素一致；Canvas 固定 scene、种子、尺寸和运行环境后可重复生成相同 PNG，重新识别与拟合仍可能变化。已试验坐姿肖像、动漫角色及四张人物原图，并对卷发工作服和白色航天服完成了模型重试与 Canvas 实图对照；风格仍有差异，不等同于用户确认通过。
+## Canvas 备用流程
 
-## 更新与移除
+会话没有内置图像生成能力时，skill 会说明改用本地 JS + Canvas，然后继续看图、绘制、核对和保存。也可以主动指定：
 
-```bash
-# 查看全局 Codex 技能
-npx skills list --global --agent codex
-
-# 更新这一项技能
-npx skills update yuanqu-handdrawn --global --yes
-
-# 更新失败时，重新执行安装命令替换技能文件
-npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex --global --yes
-
-# 移除
-npx skills remove yuanqu-handdrawn --global --agent codex --yes
-```
-
-项目安装的查看和移除去掉 `--global`；更新使用 `--project`。更新前将个人改动和输出保存在技能目录之外。安装命令参考 [skills CLI 官方说明](https://github.com/vercel-labs/skills)，本仓库此前使用 CLI 1.7.1 验证。
-
-## 无图像生成时的 Canvas 备用流程
-
-无需额外确认，skill 在能力缺失时说明采用 Canvas，并继续看图、编排数据、绘制、核对与保存。也可以主动选择：
+<details>
+<summary>查看 Canvas 用法与复绘命令</summary>
 
 ```text
 使用 $yuanqu-handdrawn，用本地 JS + Canvas 绘制这张原图，
-图2只作为风格参考；保留真实遮挡，保存到指定目录。
+保留真实遮挡，输出根目录使用 ./yuanqu-handdrawn/。
 ```
 
-新分支使用 V3 scene，脸部与衣发采用不同材质，胶囊眼保持实心，干笔方向、疏密与轮廓起伏由固定种子控制。宽笔触和衣纹由模型按原图编排曲线；脚本不自行识别照片。采用锁定的 [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) 在 Node 中导出 PNG，同时保存可直接离线打开的 HTML。详细数据与操作见 [Canvas 备用绘制](skills/yuanqu-handdrawn/references/canvas-fallback.md)。
+模型根据原图编排 V3 scene，脚本使用锁定的 `@napi-rs/canvas` 绘制 PNG，并导出可离线打开的 HTML。Canvas 样张的轮廓更规整，头发和衣服更概括，效果与内置图像生成有差异。上面的《武林外传》案例全部使用内置图像生成。
 
-复绘包内样例：
+复绘包内 Canvas 样例：
 
 ```bash
 cd skills/yuanqu-handdrawn
@@ -119,39 +155,10 @@ node scripts/render.mjs references/examples/canvas-curly-hair.json --size 1254
 node scripts/render.mjs references/examples/canvas-eva-suit.json --size 1254
 ```
 
-样例表达两张实图的拟合，不能直接套成其它人物：
+样张：[卷发工作服](assets/previews/canvas-curly-hair.png) · [白色航天服](assets/previews/canvas-eva-suit.png)。这些数据按各自原图拟合，不能直接套用到其他人物。详见 [Canvas 备用绘制](skills/yuanqu-handdrawn/references/canvas-fallback.md)；已有 V2 数据见[历史代码手绘](skills/yuanqu-handdrawn/references/code-handdrawn.md)，固定几何复绘见[旧版流程](skills/yuanqu-handdrawn/references/legacy-geometry.md)。
 
-| 卷发工作服 Canvas 样张 | 白色航天服 Canvas 样张 |
-| --- | --- |
-| ![卷发工作服](assets/previews/canvas-curly-hair.png) | ![白色航天服](assets/previews/canvas-eva-suit.png) |
-
-与最近两张模型生成图相比，Canvas 能保持圆脸胶囊、分区材质、白衣结构及必要场景，但轮廓更规整、卷发与衣纹更概括、笔触分布更均匀，尚未达到相同完成度。两种后端不会被记作完全相同的画法；继续调整时复用已保存的数据。
-
-已有 V2 scene 按 [历史代码手绘](skills/yuanqu-handdrawn/references/code-handdrawn.md) 复绘；明确要求固定几何复现时使用 [固定几何流程](skills/yuanqu-handdrawn/references/legacy-geometry.md)。旧文件继续兼容，其比例规则不进入 V3 或默认模型生成。
-
-## 设计与开发
-
-按 `codebase-design` 将规则收拢为一个 Module：
-
-| 设计概念 | 本项目的选择 |
-| --- | --- |
-| Interface | 原图＋可选风格参考＋可选输出目录，返回成品与生成记录 |
-| Implementation | 参考角色、识别与风格要求、后端选择、核对、一次修正及保存集中在技能内部 |
-| Seam | 生成执行处：根据会话实际能力与用户选择执行 |
-| Adapter | 内置图像生成与本地 JS + Canvas；V1/V2 供历史数据复绘 |
-
-Depth 来自小 Interface 隐藏识别、风格约束和交付细节；Leverage 是不同图片复用同一流程，Locality 是共用规则集中在 [SKILL.md](skills/yuanqu-handdrawn/SKILL.md)。工具参数放在 [内置生成约定](skills/yuanqu-handdrawn/references/model-generation.md)，Canvas 数据和材质放在其分支参考。Node 与导出的 HTML 执行同一份 Canvas 核心代码。
-
-修改规则时检查参考图只影响风格，能力缺失能到达 Canvas 分支，执行方式如实记录。新分支与历史渲染均有回归检查：
-
-```bash
-cd skills/yuanqu-handdrawn
-npm ci --ignore-scripts --no-audit --no-fund
-npm test
-```
-
-测试验证复绘、分区材质、遮挡、数据合法性、HTML 导出和输出文件分组，不替代视觉审核。图像效果仍以实际原图与参考逐例比较。
+</details>
 
 ## 许可证
 
-采用 [MIT 许可证](LICENSE)。本项目是原创融合风格实验，不是官方 Grok 素材。
+代码与技能采用 [MIT 许可证](LICENSE)。案例中的《武林外传》截图用于效果对照，相关权利归原权利人。本项目是原创融合风格实验，不是官方 Grok 素材。

@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-12",
+  "sourceDirectory": "/Users/dengs/Desktop/自媒体/redBook/圆趣手绘武林外传/武林外传+V3+最新版｜第1–4组完整对照长图",
+  "sourceSize": [
+    1800,
+    5100
+  ],
+  "cropConvention": "[left, top, right, bottom]，单位为原长图像素；仅裁剪左侧原图，未缩放、调色或使用右侧旧成品。",
+  "styleReference": "skills/yuanqu-handdrawn/assets/handdrawn-reference.jpg",
+  "cases": [
+    {
+      "id": "01-tong-xiangyu",
+      "name": "佟湘玉",
+      "file": "武林外传_V3单人头像_对照01_01-05_R1.jpg",
+      "box": [
+        114,
+        392,
+        838,
+        1180
+      ],
+      "original": "originals/01-tong-xiangyu.png",
+      "output": "images/01-tong-xiangyu-yuanqu.png",
+      "record": "records/01-tong-xiangyu-yuanqu.generation.md",
+      "originalSize": [
+        724,
+        788
+      ]
+    },
+    {
+      "id": "04-lv-xiucai",
+      "name": "吕秀才",
+      "file": "武林外传_V3单人头像_对照01_01-05_R1.jpg",
+      "box": [
+        111,
+        3219,
+        839,
+        4008
+      ],
+      "original": "originals/04-lv-xiucai.png",
+      "output": "images/04-lv-xiucai-yuanqu.png",
+      "record": "records/04-lv-xiucai-yuanqu.generation.md",
+      "originalSize": [
+        728,
+        789
+      ]
+    },
+    {
+      "id": "07-mo-xiaobei",
+      "name": "莫小贝",
+      "file": "武林外传_V3单人头像_对照02_06-10.jpg",
+      "box": [
+        106,
+        1335,
+        844,
+        2122
+      ],
+      "original": "originals/07-mo-xiaobei.png",
+      "output": "images/07-mo-xiaobei-yuanqu.png",
+      "record": "records/07-mo-xiaobei-yuanqu.generation.md",
+      "originalSize": [
+        738,
+        787
+      ]
+    },
+    {
+      "id": "12-qian-zhanggui",
+      "name": "钱掌柜",
+      "file": "武林外传_V3单人头像_对照03_11-15_R1.jpg",
+      "box": [
+        182,
+        1336,
+        770,
+        2121
+      ],
+      "original": "originals/12-qian-zhanggui.png",
+      "output": "images/12-qian-zhanggui-yuanqu.png",
+      "record": "records/12-qian-zhanggui-yuanqu.generation.md",
+      "originalSize": [
+        588,
+        785
+      ]
+    },
+    {
+      "id": "19-gongsun-wulong",
+      "name": "公孙乌龙",
+      "file": "武林外传_V3单人头像_对照04_16-20.jpg",
+      "box": [
+        181,
+        3219,
+        768,
+        4008
+      ],
+      "original": "originals/19-gongsun-wulong.png",
+      "output": "images/19-gongsun-wulong-yuanqu.png",
+      "record": "records/19-gongsun-wulong-yuanqu.generation.md",
+      "originalSize": [
+        587,
+        789
+      ]
+    }
+  ]
+}
