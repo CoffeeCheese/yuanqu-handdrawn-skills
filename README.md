@@ -40,22 +40,13 @@
 
 使用前准备好 Node.js 22.20 或更高版本、npm 和 Git，Codex 会话需要能查看图片、保存文件。安装 skill 本身不会增加图像生成能力。
 
+通过公开仓库直接安装到 Codex：
+
 ```bash
 npx skills add CoffeeCheese/yuanqu-handdrawn-skills --skill yuanqu-handdrawn --agent codex --global --yes
 ```
 
 只安装到当前项目时，去掉 `--global`。技能通常位于 `~/.agents/skills/yuanqu-handdrawn/` 或项目内 `.agents/skills/yuanqu-handdrawn/`。
-
-本仓库目前为 private，安装时需要仓库访问权限和 GitHub 认证。
-
-<details>
-<summary>使用 SSH 安装</summary>
-
-```bash
-npx skills add git@github.com:CoffeeCheese/yuanqu-handdrawn-skills.git --skill yuanqu-handdrawn --agent codex --global --yes
-```
-
-</details>
 
 使用内置图像生成时，不用安装渲染依赖。首次使用 Canvas 时，在实际技能目录执行 `npm ci --ignore-scripts --no-audit --no-fund`。安装需要 npm 网络或缓存，装好后可离线渲染。
 
